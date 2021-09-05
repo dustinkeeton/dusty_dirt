@@ -6,7 +6,7 @@ import paho.mqtt.client as mqtt
 
 config = yaml.safe_load(open("config.yaml"))
 
-ledService = "2d3fc060-0dcc-11ec-82a8-0242ac130003"
+soilService = "2d3fc060-0dcc-11ec-82a8-0242ac130003"
 pumpReadWrite = "cbbb4e46-0dcf-11ec-82a8-0242ac130003"
 soilRead = "ba8cf798-0de1-11ec-82a8-0242ac130003"
 client = mqtt.Client('soil')
@@ -55,7 +55,7 @@ for dev in devices:
         print('Reading moisture values...')
         # connect to peripheral and get service
         peripheral = Peripheral(dev)
-        service = peripheral.getServiceByUUID(ledService)
+        service = peripheral.getServiceByUUID(soilService)
 
         # read soil characteristic and publish to mqtt
         soilReadCharacteristic = getPeripheralCharacteristicByUUID(peripheral, soilRead)
