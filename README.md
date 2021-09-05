@@ -1,4 +1,4 @@
-# dusty_dirt
+# Dusty Dirt
 An Arduino based soil sensor with BLE built for integrating with MQTT servers and Home Assistant.
 
 ### Intent
