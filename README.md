@@ -25,5 +25,4 @@ client_port: <port_of_mqqt_broker>
 client_keep_alive: 60 # adjust to your liking
 moisture_threshold: 100 # adjust to your liking
 automate_watering: Yes # controls watering based on moisture_threshold
-read_interval: 10 # adjust to your liking
 ```
