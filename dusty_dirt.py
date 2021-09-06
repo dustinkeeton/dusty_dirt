@@ -1,8 +1,13 @@
 #! /usr/bin/python3
+import sys
+import os
 import yaml
+import time
 from bluepy.btle import Peripheral, Scanner, DefaultDelegate
 import paho.mqtt.client as mqtt
 
+conf_path = os.getcwd()
+sys.path.append(conf_path)
 config = yaml.safe_load(open("config.yaml"))
 
 soilService = "2d3fc060-0dcc-11ec-82a8-0242ac130003"
@@ -34,7 +39,7 @@ def on_message(client, userdata, msg):
 client.on_connect = on_connect
 client.on_disconnect = on_disconnect
 client.username_pw_set(config['username'], config['password'])
-client.connect(config['client_ip'], config['client_port'], config['client_keep_alive'])
+client.connect(config['client_ip'], port=config['client_port'], keepalive=config['client_keep_alive'])
 
 client.loop_start()
 
@@ -73,8 +78,8 @@ found = list(filter(filterDevice, devices))
 print(str(len(found))+' Device(s) found!')
 
 for dev in found:
+    name = str(dev.getValueText(9))
     if dev.connectable:
-        name = str(dev.getValueText(9))
         # connect to peripheral and get service and characteristics
         print('==========================================================================================')
         print('Connecting to '+name+'...')
@@ -97,5 +102,8 @@ for dev in found:
             print('moisture: ' + str(moisture))
             if (config['automate_watering']):
                 automateWatering(moisture)
+            time.sleep(10)
+    else:
+        print("Could not connect to "+name+".")
 
 client.loop_stop()
