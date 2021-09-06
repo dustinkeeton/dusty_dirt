@@ -13,7 +13,7 @@ BLEByteCharacteristic soilCharacteristic("ba8cf798-0de1-11ec-82a8-0242ac130003",
 
 void setup() {
   Serial.begin(9600);
-  while (!Serial);
+  // while (!Serial); // Debug only!
 
   Serial.println("Initializing logic...");
   pinMode(dirA, OUTPUT);
@@ -64,18 +64,18 @@ void turnLEDOff() {
 void switchPumpCharacteristicHandler(BLEDevice central, BLECharacteristic characteristic) {
   if (switchPumpCharacteristic.value()) { 
     turnOnPump();
-   } else {                              
-     turnOffPump();
+   } else {
+    turnOffPump();
    }
 }
 
 void turnOnPump() {
   Serial.println("turning on pump");
+  switchPumpCharacteristic.writeValue(1);
+
   turnLEDOn();
   digitalWrite(dirA, LOW);
   digitalWrite(dirB, HIGH);
-  
-  switchPumpCharacteristic.writeValue(1);
 
   delay(5000);
 
@@ -88,7 +88,6 @@ void turnOffPump() {
   digitalWrite(dirB,LOW); 
   turnLEDOff();
   switchPumpCharacteristic.writeValue(0);
- 
 }
 
 void checkSoil() {
@@ -97,7 +96,6 @@ void checkSoil() {
    soilCharacteristic.writeValue(moisture);
    Serial.print("Moisture Level: ");
    Serial.println(moisture);
-   delay(1000); 
 }
 
 void loop() {
@@ -112,7 +110,7 @@ void loop() {
 
     // while the central is still connected to peripheral:
     while (central.connected()) {
-      checkSoil();    
+      checkSoil();
     }
 
     // when the central disconnects, print it out:
