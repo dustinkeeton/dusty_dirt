@@ -69,41 +69,45 @@ def filterDevice(dev):
     name = str(dev.getValueText(9))
     return name.find('Dusty Dirt Sensor') != -1
 
-# scanner = Scanner().withDelegate(ScanDelegate())
-# devices = scanner.scan(10.0)
-print('Scanning devices...')
-devices = Scanner().scan()
-
-found = list(filter(filterDevice, devices))
-print(str(len(found))+' Device(s) found!')
-
-for dev in found:
+def connectToDevice(dev):
+    global curPeripheral
+    global curPumpReadWriteCharacteristic
     name = str(dev.getValueText(9))
-    if dev.connectable:
-        # connect to peripheral and get service and characteristics
-        print('==========================================================================================')
-        print('Connecting to '+name+'...')
-        peripheral = Peripheral(dev)
-        curPeripheral = peripheral
-        service = peripheral.getServiceByUUID(soilService)
-        soilReadCharacteristic = getPeripheralCharacteristicByUUID(peripheral, soilRead)
-        curPumpReadWriteCharacteristic = getPeripheralCharacteristicByUUID(peripheral, pumpReadWrite)
-        client.message_callback_add('pump/set', on_message)
+    # connect to peripheral and get service and characteristics
+    print('==========================================================================================')
+    print('Connecting to '+name+'...')
+    curPeripheral = Peripheral(dev)
+    soilReadCharacteristic = getPeripheralCharacteristicByUUID(curPeripheral, soilRead)
+    curPumpReadWriteCharacteristic = getPeripheralCharacteristicByUUID(curPeripheral, pumpReadWrite)
+    client.message_callback_add('pump/set', on_message)
 
-        print('Reading values...')
-        while True:
-           # read soil characteristic and publish to mqtt
-            moisture = int.from_bytes(soilReadCharacteristic.read(), "big")
-            client.publish('sensor/soil', payload=moisture, retain=True)
+    print('Reading values...')
+    while True:
+    # read soil characteristic and publish to mqtt
+        moisture = int.from_bytes(soilReadCharacteristic.read(), "big")
+        client.publish('sensor/soil', payload=moisture, retain=True)
 
-            pumpState = int.from_bytes(curPumpReadWriteCharacteristic.read(), "big")
-            client.publish('pump', payload="ON" if pumpState else "OFF", retain=True)
+        pumpState = int.from_bytes(curPumpReadWriteCharacteristic.read(), "big")
+        client.publish('pump', payload="ON" if pumpState else "OFF", retain=True)
 
-            print('moisture: ' + str(moisture))
-            if (config['automate_watering']):
-                automateWatering(moisture)
-            time.sleep(10)
-    else:
-        print("Could not connect to "+name+".")
+        print('moisture: ' + str(moisture))
+        if (config['automate_watering']):
+            automateWatering(moisture)
+        time.sleep(10)
 
-client.loop_stop()
+while True:
+    # scanner = Scanner().withDelegate(ScanDelegate())
+    # devices = scanner.scan(10.0)
+    print('Scanning devices...')
+    devices = Scanner().scan()
+
+    found = list(filter(filterDevice, devices))
+    print(str(len(found))+' Device(s) found!')
+
+    for dev in found:
+        try:
+            connectToDevice(dev)
+        except:
+            print("Retrying...")
+
+    client.loop_stop()
