@@ -84,7 +84,7 @@ def connectToDevice(dev):
     print('Reading values...')
     while True:
     # read soil characteristic and publish to mqtt
-        moisture = int.from_bytes(soilReadCharacteristic.read(), "big")
+        moisture = int.from_bytes(soilReadCharacteristic.read(), "little")
         client.publish('sensor/soil', payload=moisture, retain=True)
 
         pumpState = int.from_bytes(curPumpReadWriteCharacteristic.read(), "big")
