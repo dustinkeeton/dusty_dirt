@@ -5,11 +5,13 @@
 #define soil A7
 
 const int ledPin = LED_BUILTIN; // pin to use for the LED
+const int dry = 650; // readAnalog value for sensor in air
+const int wet = 420; // readAnalog value for sensor in water
 
 // Soil service and characteristics
 BLEService soilService("2d3fc060-0dcc-11ec-82a8-0242ac130003");
 BLEByteCharacteristic switchPumpCharacteristic("cbbb4e46-0dcf-11ec-82a8-0242ac130003", BLERead | BLEWrite);
-BLEByteCharacteristic soilCharacteristic("ba8cf798-0de1-11ec-82a8-0242ac130003", BLERead);
+BLEIntCharacteristic soilCharacteristic("ba8cf798-0de1-11ec-82a8-0242ac130003", BLERead);
 
 void setup() {
   Serial.begin(9600);
@@ -111,6 +113,7 @@ void loop() {
     // while the central is still connected to peripheral:
     while (central.connected()) {
       checkSoil();
+      delay(5000);
     }
 
     // when the central disconnects, print it out:
