@@ -5,8 +5,8 @@
 #define soil A7
 
 const int ledPin = LED_BUILTIN; // pin to use for the LED
-const int dry = 650; // readAnalog value for sensor in air
-const int wet = 420; // readAnalog value for sensor in water
+const int dry = 700; // readAnalog value for sensor in air
+const int wet = 350; // readAnalog value for sensor in water, wet is lower
 
 // Soil service and characteristics
 BLEService soilService("2d3fc060-0dcc-11ec-82a8-0242ac130003");
@@ -92,12 +92,31 @@ void turnOffPump() {
   switchPumpCharacteristic.writeValue(0);
 }
 
+int getPercentRange(int value) {
+  int range = dry - wet;
+  int adjustedVal = value - wet;
+  int percentRange = (adjustedVal * 100) / range; // inverse ratio
+  if (percentRange > 100) {
+    percentRange = 100;
+  } else if (percentRange < 0) {
+    percentRange = 0;
+  }
+
+  percentRange = 100 - percentRange; // inverse ratio
+
+  return percentRange;
+}
+
 void checkSoil() {
    int moisture;
    moisture = analogRead(soil);
-   soilCharacteristic.writeValue(moisture);
+   int moistPercentage = getPercentRange(moisture);
+   soilCharacteristic.writeValue(moistPercentage);
    Serial.print("Moisture Level: ");
-   Serial.println(moisture);
+   Serial.print(moisture);
+   Serial.print(" (");
+   Serial.print(moistPercentage);
+   Serial.println("%)");
 }
 
 void loop() {

@@ -12,6 +12,11 @@ Initial assumptions are based on using an arduino with BLE capabilities (such as
 
 Currently the codebase assumes a lot about a Home Assistant setup. `dusty_dirt.py` is to be run on an intermediary device (like a raspi) that then sends mqtt messages to Home Assistant. This limits its flexibility.
 
+### Power Consumption
+~5v 
+0.08 amps standby
+0.18 amps while pump on
+
 ### Getting Started
 TBD
 
