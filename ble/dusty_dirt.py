@@ -1,4 +1,6 @@
 #! /usr/bin/python3
+# BLE central device acting as MQTT intermediary between broker and dusty dirt sensor
+
 import sys
 import os
 import yaml
