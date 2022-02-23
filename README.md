@@ -17,6 +17,14 @@ Currently the codebase assumes a lot about a Home Assistant setup. `dusty_dirt.p
 0.08 amps standby
 0.18 amps while pump on
 
+
+### Arduino Nano 33 IOT
+board: Arduino NANO 33 IoT
+programmer: arduino:sam_ice
+
+### ESP32-S
+board: Node32s
+
 ### Getting Started
 TBD
 
@@ -31,3 +39,18 @@ client_keep_alive: 60 # adjust to your liking
 moisture_threshold: 100 # adjust to your liking
 automate_watering: Yes # controls watering based on moisture_threshold
 ```
+
+### Secrets
+`secrets.h` file is used to define secrets for use in `ino` files. 
+```
+// WiFi
+#define SECRET_SSID ""
+#define SECRET_PASS ""
+
+// MQQT
+#define SECRET_CLIENT_IP ""
+#define SECRET_USERNAME ""
+#define SECRET_PASSWORD ""
+```
+
+
